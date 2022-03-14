@@ -1,0 +1,25 @@
+﻿using DevextremeExamples.Models;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+
+namespace DevextremeExamples.Controllers
+{
+    public class DataGridFormController : Controller
+    {
+        public IActionResult Index()
+        {
+            List<UsersDto> ModelState = new List<UsersDto>();
+            ModelState.Add(new UsersDto { Adress = "Adres bla bla", BirthDate = DateTime.Now.AddDays(-500), Email = "mail1@mail.com", Id = 1, Name = "Test", SurName = "Test" });
+            ModelState.Add(new UsersDto { Adress = "Adres bla bla", BirthDate = DateTime.Now.AddDays(-700), Email = "mail2@mail.com", Id = 1, Name = "Test1", SurName = "Test" });
+            ModelState.Add(new UsersDto { Adress = "Adres bla bla", BirthDate = DateTime.Now.AddDays(-1000), Email = "mail3@mail.com", Id = 1, Name = "Test2", SurName = "Test" });
+            ModelState.Add(new UsersDto { Adress = "Adres bla bla", BirthDate = DateTime.Now.AddDays(-1500), Email = "mail4@mail.com", Id = 1, Name = "Test3", SurName = "Test" });
+            return View(ModelState);
+        }
+        [HttpPost]
+        public IActionResult RowUpdate(UsersDto models)
+        {
+            return Json(false);
+        }
+    }
+}

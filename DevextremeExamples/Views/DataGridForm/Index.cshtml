@@ -1,0 +1,108 @@
+﻿@model List<UsersDto>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="dx-viewport p-5">
+    <div class="demo-container">
+        <div id="gridContainer"></div>
+    </div>
+</div>
+@section PageScripts{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+            GridData(model);
+        });
+        function GridData(models) {
+            $("#gridContainer").dxDataGrid({
+                dataSource: models,
+                keyExpr: "Id",
+                showBorders: true,
+                paging: {
+                    enabled: true
+                },
+                editing: {
+                    mode: "popup",
+                    //mode: "form"
+                    allowUpdating: true,
+                    form: {
+                        labelLocation: "top"
+                    },
+                    popup: {
+                        showTitle: true,
+                        title: "form title"
+                    }
+                },
+                onCellPrepared: function (e) {
+                    if (e.rowType === "data" && e.column.command === "edit") {
+                        $links = e.cellElement.find(".dx-link-edit");
+                        $links.text("Düzenle");
+                        $links1 = e.cellElement.find(".dx-link-save");
+                        $links1.text("Kaydet");
+                        $links2 = e.cellElement.find(".dx-link-cancel");
+                        $links2.text("Vazgeç");
+                        $links3 = e.cellElement.find(".dx-link-delete");
+                        $links3.text("Sil");
+                    }
+                },
+                onRowUpdated: function (e) {
+                    rowUpdate(e.data);
+                },
+                columns: [
+                    {
+                        dataField: "Name",
+                        caption: "Adı",
+                        width: 70,
+                        validationRules: [{ type: "required" }]
+                    },
+                    {
+                        dataField: "SurName",
+                        caption: "Soyad",
+                        width: 170
+                    }, {
+                        dataField: "Email",
+                        caption: "E-mail",
+                        width: 125
+                    }, {
+                        dataField: "BirthDate",
+                        dataType: "date",
+                        format: "dd/MM/yyyy",
+                    }, {
+                        dataField: "Adress",
+                        visible: false,
+                        formItem: {
+                            colSpan: 2,
+                            editorType: "dxTextArea",
+                            editorOptions: {
+                                height: 100
+                            }
+                        }
+                    }
+                ]
+            });
+        }
+          function rowUpdate(Data) {
+            AjaxMethod('@Url.Action("RowUpdate", "DataGridForm")', Data);
+        }
+        function AjaxMethod(url, Data) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: { models: Data },
+                dataType: 'json',
+                async: false,
+                cache: false,
+                success: function (html) {
+                    alert(html === true?"İşlem Başarılı":"Hatalı İşlem");
+                }, error: function (xhr, status, error) {
+                    alert(error.responseTextss);
+                }
+            });
+        }
+    </script>
+
+}
+
