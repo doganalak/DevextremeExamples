@@ -1,0 +1,56 @@
+﻿@model List<DoughnutDto>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style type="text/css">
+    #pie {
+        height: 440px;
+    }
+</style>
+<div class="demo-container">
+    <div id="pie"></div>
+</div>
+@section PageScripts{
+    <script type="text/javascript">
+            $(document).ready(function () {
+            var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+                DoughnutChart(model);
+             });
+        function DoughnutChart(data) {
+            $('#pie').dxPieChart({
+                type: 'doughnut',
+                palette: 'Soft Pastel',
+                title: 'Ülkemizde internet kullanım oranı',
+                dataSource: data,
+                legend: {
+                    horizontalAlignment: 'center',
+                    verticalAlignment: 'bottom',
+                },
+                export: {
+                    enabled: true,
+                },
+                series: [{
+                    smallValuesGrouping: {
+                        mode: 'topN',
+                        topCount:5,
+                    },
+                    argumentField: 'City',
+                    valueField: 'Ratio',
+                    label: {
+                        visible: true,
+                      /* format: 'fixedPoint',*/
+                       format: 'millions',
+                        customizeText(point) {
+                            return `${point.argumentText}: ${point.valueText}%`;
+                        },
+                        connector: {
+                            visible: true,
+                            width: 1,
+                        },
+                    },
+                }],
+            });
+        }
+    </script>
+}

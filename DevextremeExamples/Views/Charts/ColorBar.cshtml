@@ -1,0 +1,35 @@
+﻿@model List<ColorBarChartDto>
+@{
+    ViewData["Title"] = "ColorBar";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="demo-container">
+    <div id="chart"></div>
+</div>
+@section PageScripts{
+    <script type="text/javascript">
+            $(document).ready(function () {
+            var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+                ColorBarChart(model);
+        });
+        function ColorBarChart(data) {
+            $('#chart').dxChart({
+                dataSource: data,
+                palette: 'soft',
+                title: {
+                    text: 'Ülkemizdeki yaş oranları',
+                    subtitle: '2022 Yılı',
+                },
+                commonSeriesSettings: {
+                    type: 'bar',
+                    valueField: 'Nufus',
+                    argumentField: 'Yas',
+                    ignoreEmptyPoints: true,
+                },
+                seriesTemplate: {
+                    nameField: 'Yas',
+                },
+            });
+        }
+    </script>
+}
