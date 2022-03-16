@@ -1,0 +1,95 @@
+﻿@model List<RowSelectionDto>
+@{
+    ViewData["Title"] = "RowSelectionGrid";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style type="text/css">
+    #employeeInfo .employeePhoto {
+        height: 100px;
+        float: left;
+        padding: 20px;
+    }
+    #employeeInfo .employeeNotes {
+        padding-top: 20px;
+        text-align: justify;
+    }
+    .dark #employeeInfo .employeeNotes {
+        color: rgb(181, 181, 181);
+    }
+</style>
+<div class="demo-container">
+    <div id="gridContainer"></div>
+    <div id="employeeInfo">
+        <img class="employeePhoto" />
+        <p class="employeeNotes"></p>
+    </div>
+</div>
+@section PageScripts{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+            GridData(model);
+        });
+        function GridData(models) {
+            $('#gridContainer').dxDataGrid({
+                dataSource: models,
+                keyExpr: 'ID',
+                selection: {
+                    mode: 'single',
+                },
+                hoverStateEnabled: true,
+                showBorders: true,
+                filterRow: {
+                    visible: true,
+                    applyFilter: 'auto',
+                },
+                searchPanel: {
+                    visible: true,
+                    width: 240,
+                    placeholder: 'Ara...',
+                },
+                headerFilter: {
+                    visible: true,
+                },
+                paging: {
+                    pageSize: 2,
+                },
+                pager: {
+                    visible: true,
+                    allowedPageSizes: [1, 2, 'all'],
+                    showPageSizeSelector: true,
+                    showInfo: true,
+                    showNavigationButtons: true,
+                },
+                scrolling: {
+                    rowRenderingMode: 'virtual',
+                },
+                columns: [{
+                    dataField: 'Prefix',
+                    caption: 'Title',
+                    width: 70,
+                },
+                    'FirstName',
+                    'LastName', {
+                    dataField: 'Position',
+                    width: 180,
+                }, {
+                    dataField: 'BirthDate',
+                    dataType: 'date',
+                }, {
+                    dataField: 'HireDate',
+                    dataType: 'date',
+                }],
+                onSelectionChanged(selectedItems) {
+                    const data = selectedItems.selectedRowsData[0];
+                    if (data) {
+                        $('.employeeNotes').text(data.Notes);
+                        $('.employeePhoto').attr('src', data.Picture);
+                    }
+                },
+            });
+        } 
+    </script>
+}
+

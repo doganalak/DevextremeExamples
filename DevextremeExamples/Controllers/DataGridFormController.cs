@@ -1,12 +1,20 @@
 ﻿using DevextremeExamples.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace DevextremeExamples.Controllers
 {
     public class DataGridFormController : Controller
     {
+        private readonly IHostingEnvironment _hostingEnvironment;
+        public DataGridFormController(IHostingEnvironment hostingEnvironment)
+        {
+            _hostingEnvironment = hostingEnvironment;
+        }
         public IActionResult Index()
         {
             List<UsersDto> ModelState = new List<UsersDto>();
@@ -20,6 +28,14 @@ namespace DevextremeExamples.Controllers
         public IActionResult RowUpdate(UsersDto models)
         {
             return Json(false);
+        }
+        public IActionResult RowSelectionGrid()
+        {
+            var rootPath = _hostingEnvironment.WebRootPath;
+            var fullPath = Path.Combine(rootPath, "JsonFile/RowSelectionData.json");
+            var jsonData = System.IO.File.ReadAllText(fullPath);
+            List<RowSelectionDto> rowSelectionDtos = JsonConvert.DeserializeObject<List<RowSelectionDto>>(jsonData);
+            return View(rowSelectionDtos);
         }
     }
 }
