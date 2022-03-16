@@ -1,0 +1,26 @@
+[
+  {
+    "text": "Bayi",
+    "description": "Bayi",
+    "startDate": "2021-04-29T18:00:00.000Z",
+    "endDate": "2021-04-29T20:30:00.000Z",
+    "phone": "0530-888-22-22",
+    "location": "Bayi"
+  },
+  {
+    "text": "Maslak Ofis",
+    "description": "Maslak Ofis",
+    "startDate": "2021-04-29T18:00:00.000Z",
+    "endDate": "2021-04-29T19:00:00.000Z",
+    "phone": "0530-888-66-22",
+    "location": "Maslak Ofis"
+  },
+  {
+    "text": "Merkez Ofis",
+    "description": "Merkez Ofis",
+    "startDate": "2021-04-29T17:00:00.000Z",
+    "endDate": "2021-04-29T18:00:00.000Z",
+    "phone": "0530-888-11-11",
+    "location": "Merkez Ofis"
+  }
+]

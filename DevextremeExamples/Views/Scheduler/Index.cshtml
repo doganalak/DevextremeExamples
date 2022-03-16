@@ -1,0 +1,94 @@
+﻿@model List<SchedulerDto>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="demo-container">
+    <div id="scheduler"></div>
+</div>
+@section PageScripts{
+    <script type="text/javascript">
+          $(document).ready(function () {
+            var model = @Html.Raw(JsonConvert.SerializeObject(Model));
+              scheduler(model);
+          });
+            function scheduler(data) {
+           $('#scheduler').dxScheduler({
+                timeZone: 'America/Los_Angeles',
+                dataSource: data,
+                views: ['day', 'week', 'workWeek', 'month'],
+                currentView: 'day',
+               currentDate: new Date(2021, 3, 29),
+                startDayHour: 9,
+                height: 600,
+                editing: {
+                    allowAdding: true,
+                    allowDeleting: true,
+                    allowDragging: true,
+                    allowResizing: true,
+                    allowTimeZoneEditing: false,
+                    allowUpdating: true
+                },
+               onAppointmentAdding: function (e) {
+                   var Data = JSON.stringify(e.appointmentData, null, '\t');
+                   AjaxMethod('@Url.Action("Update", "Scheduler")', Data);
+               },
+               onAppointmentDeleting: function (e) {
+                    var Data = JSON.stringify(e.appointmentData, null, '\t');
+                   AjaxMethod('@Url.Action("Update", "Scheduler")', "Delete#"+ Data);
+               },
+               onAppointmentUpdating(e) {
+                    var item = Object.assign(e.oldData, e.newData);
+                   var Data = JSON.stringify(item, null, '\t');
+                   AjaxMethod('@Url.Action("Update", "Scheduler")', Data);
+               },
+               onAppointmentFormOpening: function (e) {
+                   e.popup.option('showTitle', true);
+                   e.popup.option('title', e.appointmentData.text ?
+                       e.appointmentData.text :
+                       'Create a new appointment');
+
+                   const form = e.form;
+                   let mainGroupItems = form.itemOption('mainGroup').items;
+                   if (!mainGroupItems.find(function (i) { return i.dataField === "phone" })) {
+                       mainGroupItems.push({
+                           colSpan: 2,
+                           label: { text: "Phone Number" },
+                           editorType: "dxTextBox",
+                           dataField: "phone"
+                       });
+                       form.itemOption('mainGroup', 'items', mainGroupItems);
+                   }
+
+                   let formItems = form.option("items");
+                   if (!formItems.find(function (i) { return i.dataField === "location" })) {
+                       formItems.push({
+                           colSpan: 2,
+                           label: { text: "Location" },
+                           editorType: "dxTextBox",
+                           dataField: "location"
+                       });
+                       form.option("items", formItems);
+                   }
+               }
+            });
+        }
+        function AjaxMethod(url, Data) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: { models: Data },
+                dataType: 'json',
+                async: false,
+                cache: false,
+                success: function (html) {
+                    alert(html === true ? "İşlem Başarılı" : "Hatalı İşlem");
+                }, error: function (xhr, status, error) {
+                    alert(error.responseTextss);
+                }
+            });
+        }
+    </script>
+}
