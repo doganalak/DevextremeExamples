@@ -1,0 +1,72 @@
+﻿@model NodeandEdgeArraysDto
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="demo-container">
+    <div id="diagram"> </div>
+</div>
+@section PageScripts{
+    <script type="text/javascript">
+        var autoSaveIntervalMs = 2000;
+        var autoSaveTimeout = -1;
+          $(document).ready(function () {
+              NodeandEdgeArrays();
+          });
+        function NodeandEdgeArrays() {
+            var   flowEdges = @Html.Raw(JsonConvert.SerializeObject(Model.flowEdges));
+            var flowNodes = @Html.Raw(JsonConvert.SerializeObject(Model.flowNodes));
+            $('#diagram').dxDiagram({
+                nodes: {
+                    dataSource: flowNodes,
+                    textExpr: 'text',
+                    typeExpr: 'type',
+                    autoLayout: {
+                        type: 'layered',
+                    },
+                },
+                edges: {
+                    dataSource: flowEdges,
+                    textExpr: 'text',
+                    fromExpr: 'fromId',
+                    toExpr: 'toId',
+                },
+                toolbox: {
+                    groups: ['general'],
+                },
+                onOptionChanged: function (e) {
+                    if (e.name === "hasChanges" && e.value && autoSaveTimeout === -1) {
+                        autoSaveTimeout = setTimeout(function () {
+                            var data = e.component.export();
+                            //window.localStorage.setItem("foo", data);
+                            //console.log(e.component._edgesOption._items);
+                            //console.log(e.component._nodesOption._items);
+                            var nodesOption = e.component._nodesOption._items;
+                            var edgesOption = e.component._edgesOption._items;
+                            console.log(nodesOption);
+                            OptionMethod(nodesOption, edgesOption);
+                            // saves data to a local storage
+                            autoSaveTimeout = -1;
+                            e.component.option("hasChanges", false);
+                        }, autoSaveIntervalMs);
+                    }
+                }
+            });
+        }
+        function OptionMethod(nodesOption, edgesOption) {
+            $.ajax({
+                url: '@Url.Action("Update", "Diagram")',
+                type: 'POST',
+                data: { "NodesOption": JSON.stringify(nodesOption), "EdgesOption": JSON.stringify(edgesOption) },
+                dataType: 'json',
+                async: false,
+                cache: false,
+                success: function (html) {
+                    //alert(html === true ? "İşlem Başarılı" : "Hatalı İşlem");
+                }, error: function (xhr, status, error) {
+                    alert(error.responseTextss);
+                }
+            });
+        }
+    </script>
+}
